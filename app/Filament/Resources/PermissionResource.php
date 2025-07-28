@@ -42,30 +42,18 @@ class PermissionResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            // ->columns([
-            //     Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
-            //     Tables\Columns\TextColumn::make('created_at')->dateTime()->label('Created')->sortable(),
-            // ])
-            // ->filters([
-            //     //
-            // ])
-            // ->actions([
-            //     Tables\Actions\EditAction::make(),
-            // ])
-            // ->bulkActions([
-            //     Tables\Actions\DeleteBulkAction::make()->visible(fn () => auth()->user()->can('delete permissions')),
-            // ]);
-            ->query(
-                fn(Builder $query) => $query->selectRaw("*, SUBSTRING_INDEX(name, '-', -1) as group_key")
-            )
-            ->groups([
-                Tables\Grouping\Group::make('group_key')
-                    ->label('Group')
-                    ->getTitleFromRecordUsing(fn($record) => ucfirst($record->group_key)),
-            ])
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Permission Name'),
-                Tables\Columns\TextColumn::make('created_at')->label('Created')->dateTime(),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->label('Created')->sortable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make()->visible(fn () => auth()->user()->can('delete permissions')),
             ]);
     }
 
