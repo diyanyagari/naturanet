@@ -38,6 +38,17 @@ class CustomerResource extends Resource
                 ->extraAttributes(['aria-autocomplete' => 'none'])
                 ->unique(ignoreRecord: true),
 
+            Forms\Components\TextInput::make('no_hp')
+                ->label('No. HP')
+                ->required()
+                ->prefix('+62')
+                ->numeric()
+                ->minLength(9)
+                ->maxLength(13)
+                ->autocomplete('tel')
+                ->extraAttributes(['inputmode' => 'numeric'])
+                ->dehydrateStateUsing(fn ($state) => '+62' . ltrim($state, '0')),
+
             Forms\Components\TextInput::make('jenis_customer')
                 ->label('Jenis Customer')
                 ->required(),
@@ -72,6 +83,7 @@ class CustomerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('username')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('no_hp')->label('No. HP'),
                 Tables\Columns\TextColumn::make('jenis_customer'),
                 Tables\Columns\TextColumn::make('nik'),
                 Tables\Columns\TextColumn::make('name'),
@@ -84,7 +96,7 @@ class CustomerResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()->visible(fn () => auth()->user()->can('delete customers')),
+                Tables\Actions\DeleteBulkAction::make()->visible(fn() => auth()->user()->can('delete customers')),
             ]);
     }
 
