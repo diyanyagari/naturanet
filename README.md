@@ -76,7 +76,7 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-Visit: [http://localhost:8000/admin](http://localhost:8000/admin)
+Visit: [http://localhost:8000/cms](http://localhost:8000/cms)
 
 Default credentials (if seeded):
 
