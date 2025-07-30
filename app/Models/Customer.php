@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\KartuKeluarga as ModelsKartuKeluarga;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use \KartuKeluarga;
+use Laravel\Sanctum\HasApiTokens;
 
 class Customer extends Model
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;
@@ -41,13 +43,13 @@ class Customer extends Model
 
     public function kkAnggota()
     {
-        return $this->belongsToMany(KartuKeluarga::class, 'kartu_keluarga_anggota', 'customer_id', 'kartu_keluarga_id')
+        return $this->belongsToMany(ModelsKartuKeluarga::class, 'kartu_keluarga_anggota', 'customer_id', 'kartu_keluarga_id')
             ->withPivot('hubungan')
             ->withTimestamps();
     }
 
     public function kkDikepalai()
     {
-        return $this->hasOne(KartuKeluarga::class, 'kepala_keluarga_id', 'uuid');
+        return $this->hasOne(ModelsKartuKeluarga::class, 'kepala_keluarga_id', 'uuid');
     }
 }
