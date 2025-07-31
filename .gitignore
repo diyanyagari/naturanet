@@ -51,8 +51,12 @@ yarn-error.log
 /public/hot
 /public/mix-manifest.json
 /public/js/*.js
+/public/js/**/*.js
 /public/css/*.css
+/public/css/**/*.css
 /public/build
+/public/css/
+/public/js/
 
 # Laravel Telescope & Debugbar
 storage/debugbar/
