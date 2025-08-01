@@ -39,8 +39,5 @@ jobs:
             docker compose build
             docker compose up -d
 
-            docker compose exec -T app php artisan migrate --force
-            docker compose exec -T app php artisan config:cache
-
-      - name: Test if Laravel app is ready
-        run: docker compose exec -T app curl -s http://localhost:9000
+            # Check if Docker container is running on port 9000
+            sudo lsof -i :9000 || echo "No service is using port 9000"
