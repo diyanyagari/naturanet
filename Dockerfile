@@ -14,6 +14,10 @@ WORKDIR /var/www
 # Copy source code
 COPY . .
 
+RUN mkdir -p bootstrap/cache && \
+    mkdir -p storage/framework/{sessions,views,cache} && \
+    chmod -R 775 bootstrap/cache storage
+
 # Install Laravel deps
 RUN composer install --optimize-autoloader --no-dev
 
