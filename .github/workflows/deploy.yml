@@ -36,7 +36,7 @@ jobs:
             echo ".env created with DB & APP_KEY from secrets..."
 
             docker-compose down
-            docker-compose build --build-arg ENV_FILE=.env
+            docker-compose build --build-arg ENV_FILE=.env --no-cache
             docker-compose up -d
 
             # Check if Docker container is running on port 9000

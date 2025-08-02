@@ -14,16 +14,18 @@ WORKDIR /var/www
 # Copy source code
 COPY . .
 
-RUN mkdir -p bootstrap/cache && \
-    mkdir -p storage/framework/{sessions,views,cache} && \
-    chmod -R 775 bootstrap/cache storage
+RUN cp .env.example .env || touch .env
 
-RUN cp .env.example .env
+RUN mkdir -p bootstrap/cache storage/framework/{sessions,views,cache} && \
+    chmod -R 775 bootstrap/cache storage && \
+    chown -R www-data:www-data bootstrap/cache storage
+
+USER www-data
 
 # Install Laravel deps
 RUN composer install --optimize-autoloader --no-dev
 
-RUN php artisan config:clear
+USER root
 
 # Set permissions (opsional, tergantung config kamu)
-RUN chown -R www-data:www-data /var/www
+# RUN chown -R www-data:www-data /var/www
