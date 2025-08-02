@@ -18,8 +18,12 @@ RUN mkdir -p bootstrap/cache && \
     mkdir -p storage/framework/{sessions,views,cache} && \
     chmod -R 775 bootstrap/cache storage
 
+RUN cp .env.example .env
+
 # Install Laravel deps
 RUN composer install --optimize-autoloader --no-dev
+
+RUN php artisan config:clear
 
 # Set permissions (opsional, tergantung config kamu)
 RUN chown -R www-data:www-data /var/www
