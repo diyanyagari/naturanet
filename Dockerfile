@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git unzip zip curl libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev libzip-dev libicu-dev \
     && docker-php-ext-install pdo pdo_mysql mbstring zip gd intl
@@ -14,23 +14,20 @@ WORKDIR /var/www
 # Copy source code
 COPY . .
 
-# Set up Laravel required directories
-RUN cp .env.example .env || touch .env && \
-    mkdir -p bootstrap/cache \
+# Create Laravel required folders with correct permissions
+RUN mkdir -p bootstrap/cache \
     storage/framework/{sessions,views,cache} \
     storage/logs \
-    && chown -R www-data:www-data bootstrap storage \
-    && chmod -R 775 bootstrap storage
+    /tmp/composer-cache \
+    && chown -R www-data:www-data bootstrap storage /tmp/composer-cache \
+    && chmod -R 775 bootstrap storage /tmp/composer-cache
 
-# Set writable cache directory for composer (optional, to avoid warnings)
-RUN mkdir -p /var/www/.composer && \
-    chown -R www-data:www-data /var/www/.composer
+RUN chown -R www-data:www-data /var/www
 
-# Use correct user and run composer install
+# Switch to www-data before running Composer
 USER www-data
 
-RUN COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
+# RUN COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
 
-# Ensure Laravel has proper ownership
+# Switch back to root to finalize file permissions
 USER root
-RUN chown -R www-data:www-data /var/www
