@@ -15,19 +15,25 @@ WORKDIR /var/www
 COPY . .
 
 # Create Laravel required folders with correct permissions
-RUN mkdir -p bootstrap/cache \
-    storage/framework/{sessions,views,cache} \
-    storage/logs \
-    /tmp/composer-cache \
-    && chown -R www-data:www-data bootstrap storage /tmp/composer-cache \
-    && chmod -R 775 bootstrap storage /tmp/composer-cache
+# RUN mkdir -p bootstrap/cache \
+#     storage/framework/{sessions,views,cache} \
+#     storage/logs \
+#     /tmp/composer-cache \
+#     && chown -R www-data:www-data bootstrap storage /tmp/composer-cache \
+#     && chmod -R 775 bootstrap storage /tmp/composer-cache
 
 RUN chown -R www-data:www-data /var/www
 
 # Switch to www-data before running Composer
 USER www-data
 
-# RUN COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
+RUN mkdir -p bootstrap/cache storage/framework/sessions
+RUN mkdir -p bootstrap/cache storage/framework/views
+RUN mkdir -p bootstrap/cache storage/framework/cache
+RUN chmod -R 775 bootstrap/cache storage
+RUN chown -R www-data:www-data bootstrap storage bootstrap/cache
+
+RUN COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
 
 # Switch back to root to finalize file permissions
 USER root

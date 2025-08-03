@@ -26,21 +26,53 @@ jobs:
 
             cp .env.example .env
 
-            echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
-            echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            # echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
+            # echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+            # echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+            # echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+            # echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+            # echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+            cat <<EOF > .env
+            APP_NAME=Laravel
+            APP_ENV=production
+            APP_KEY=${{ secrets.APP_KEY }}
+            APP_DEBUG=false
+            APP_URL=https://yourdomain.com
+
+            LOG_CHANNEL=stack
+
+            DB_CONNECTION=mysql
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+            BROADCAST_DRIVER=log
+            CACHE_DRIVER=file
+            QUEUE_CONNECTION=sync
+            SESSION_DRIVER=file
+            SESSION_LIFETIME=120
+
+            MEMCACHED_HOST=127.0.0.1
+
+            REDIS_HOST=127.0.0.1
+            REDIS_PASSWORD=null
+            REDIS_PORT=6379
+
+            MAIL_MAILER=smtp
+            MAIL_HOST=mailpit
+            MAIL_PORT=1025
+            MAIL_USERNAME=null
+            MAIL_PASSWORD=null
+            MAIL_ENCRYPTION=null
+            MAIL_FROM_ADDRESS="hello@example.com"
+            MAIL_FROM_NAME="\${APP_NAME}"
+
+            EOF
 
             echo ".env created with DB & APP_KEY from secrets..."
-            echo "==== DEBUG: DATABASE CONFIG ===="
-            echo "DB_HOST=${{ secrets.DB_HOST }}"
-            echo "DB_PORT=${{ secrets.DB_PORT }}"
-            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}"
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
-            echo "================================="
 
             docker-compose down
             docker-compose build --build-arg ENV_FILE=.env --no-cache
