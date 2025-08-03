@@ -34,6 +34,13 @@ jobs:
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
 
             echo ".env created with DB & APP_KEY from secrets..."
+            echo "==== DEBUG: DATABASE CONFIG ===="
+            echo "DB_HOST=${{ secrets.DB_HOST }}"
+            echo "DB_PORT=${{ secrets.DB_PORT }}"
+            echo "DB_DATABASE=${{ secrets.DB_DATABASE }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "================================="
 
             docker-compose down
             docker-compose build --build-arg ENV_FILE=.env --no-cache
