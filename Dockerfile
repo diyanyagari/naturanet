@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.3-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -13,14 +13,6 @@ WORKDIR /var/www
 
 # Copy source code
 COPY . .
-
-# Create Laravel required folders with correct permissions
-# RUN mkdir -p bootstrap/cache \
-#     storage/framework/{sessions,views,cache} \
-#     storage/logs \
-#     /tmp/composer-cache \
-#     && chown -R www-data:www-data bootstrap storage /tmp/composer-cache \
-#     && chmod -R 775 bootstrap storage /tmp/composer-cache
 
 RUN chown -R www-data:www-data /var/www
 
