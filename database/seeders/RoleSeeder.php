@@ -14,18 +14,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        $roleName = env('SUPERADMIN_ROLE', 'superadmin');
+        
         Role::firstOrCreate(
-            ['name' => 'superadmin'],
-            ['guard_name' => 'web']
-        );
-
-        Role::firstOrCreate(
-            ['name' => 'admin-sampah'],
-            ['guard_name' => 'web']
-        );
-
-        Role::firstOrCreate(
-            ['name' => 'admin-pohon'],
+            ['name' => $roleName],
             ['guard_name' => 'web']
         );
     }

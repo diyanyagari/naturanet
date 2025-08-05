@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -15,18 +16,23 @@ class SuperAdminSeeder extends Seeder
      */
     public function run(): void
     {
+        $roleName = env('SUPERADMIN_ROLE', 'superadmin');
 
         $role = Role::firstOrCreate([
-            'name' => 'superadmin',
+            'name' => $roleName,
             'guard_name' => 'web',
         ]);
 
+        $username = env('SUPERADMIN_USERNAME', 'superadmin');
+        $password = env('SUPERADMIN_PASSWORD', 'password123');
+        $name = env('SUPERADMIN_NAME', 'Super Admin');
+
         $user = User::firstOrCreate(
-            ['username' => 'superadmin'],
+            ['username' => $username],
             [
                 'uuid' => (string) Str::uuid(),
-                'name' => 'Super Admin',
-                'password' => bcrypt('password123'),
+                'name' => $name,
+                'password' => Hash::make($password),
             ]
         );
 
