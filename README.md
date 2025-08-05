@@ -1,7 +1,7 @@
 # ♻️ NaturaNet CMS - Laravel + Filament
 
-This is a CMS system built with **Laravel 11** and **Filament v3**, intended to manage a digital waste bank and tree planting platform.\
-It supports roles such as `superadmin`, `admin-sampah`, `admin-pohon`, and other extendable user roles. (just in case, thats naming roles can be changes)
+This is a CMS system built with **Laravel 11** and **Filament v3**, intended to manage a digital waste bank and tree planting platform.  
+It supports roles such as `superadmin`, `admin-sampah`, `admin-pohon`, and other extendable user roles.
 
 ---
 
@@ -12,11 +12,10 @@ It supports roles such as `superadmin`, `admin-sampah`, `admin-pohon`, and other
 - 🌱 Tree Planting Management
 - 📊 Dashboard via Filament
 - 🔐 Protected Admin Panel
-- and more feature extendable
 
 ---
 
-## 📦 Requirements
+## 📦 Requirements (Manual Setup)
 
 - PHP 8.2+
 - Composer
@@ -25,9 +24,70 @@ It supports roles such as `superadmin`, `admin-sampah`, `admin-pohon`, and other
 
 ---
 
-## 🛠️ Installation
+## 🐳 Run with Docker (Recommended)
 
-Follow the steps below to run this project locally:
+### ⚙️ Prerequisites
+
+- Docker
+- MySQL (can be external or shared host DB)
+- `.env` file configured
+
+### 📥 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/naturanet-cms.git
+cd naturanet-cms
+```
+
+### ⚙️ 2. Configure Environment Variables
+
+Create `.env` from the example:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` to set your **MySQL credentials** (e.g., from a VPS-hosted DB):
+
+```env
+DB_HOST=your-db-host
+DB_PORT=3306
+DB_DATABASE=naturanet
+DB_USERNAME=your-user
+DB_PASSWORD=your-pass
+```
+
+### 🐳 3. Build & Run the Container
+
+```bash
+docker-compose up -d --build
+```
+
+> It will expose the app on [http://localhost:8080](http://localhost:8080)
+
+### 🧬 4. Run Migrations & Seeders
+
+If this is the first time running the project, execute:
+
+```bash
+docker exec -it natura-net php artisan migrate
+docker exec -it natura-net php artisan db:seed --class=RoleSeeder
+```
+
+> Optionally, seed an admin user:
+```bash
+docker exec -it natura-net php artisan db:seed --class=SuperAdminSeeder
+```
+
+You can also use custom credentials via `.env`:
+```env
+SEED_ADMIN_USERNAME=admin
+SEED_ADMIN_PASSWORD=securepass123
+```
+
+---
+
+## 💻 Manual Installation (Non-Docker)
 
 ### 1. Clone the Repository
 
@@ -76,7 +136,7 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-Visit: [http://localhost:8000/cms](http://localhost:8000/cms)
+Visit: [http://localhost:8000/admin](http://localhost:8000/admin)
 
 Default credentials (if seeded):
 
@@ -111,4 +171,3 @@ This project is open-sourced for internal or public use. You may fork and custom
 ## 🤝🏼 Contribution
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
