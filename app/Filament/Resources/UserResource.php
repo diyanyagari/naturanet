@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Spatie\Permission\Models\Role;
 use App\Traits\HasFilamentPermissions;
+use Illuminate\Support\Facades\Config;
 
 
 class UserResource extends Resource
@@ -56,7 +57,7 @@ class UserResource extends Resource
                 // 👉 Place the role dropdown here
                 Forms\Components\Select::make('role')
                     ->label('Role')
-                    ->options(Role::where('name', '!=', 'superadmin')->pluck('name', 'name'))
+                    ->options(Role::where('name', '!=', Config::get('roles.superadmin'))->pluck('name', 'name'))
                     ->searchable()
                     ->required(),
             ]);
@@ -71,7 +72,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Role')
                     ->getStateUsing(fn($record) => $record->roles
-                        ->where('name', '!=', 'superadmin')
+                        ->where('name', '!=', Config::get('roles.superadmin'))
                         ->pluck('name')->join(', '))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->label('Created')->dateTime()->sortable(),
@@ -83,7 +84,7 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->beforeFormFilled(function ($record, $action) {
-                        if ($record->hasRole('superadmin')) {
+                        if ($record->hasRole(Config::get('roles.superadmin'))) {
                             \Filament\Notifications\Notification::make()
                                 ->title('Tidak bisa edit.')
                                 ->danger()
@@ -121,7 +122,7 @@ class UserResource extends Resource
     {
         return parent::getEloquentQuery()
             ->whereDoesntHave('roles', function ($query) {
-                $query->where('name', 'superadmin');
+                $query->where('name', Config::get('roles.superadmin'));
             });
     }
 }
