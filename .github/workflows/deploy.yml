@@ -42,6 +42,11 @@ jobs:
 
             LOG_CHANNEL=stack
 
+            SUPERADMIN_ROLE=${{ secrets.SUPERADMIN_ROLE }}
+            SUPERADMIN_USERNAME=${{ secrets.SUPERADMIN_USERNAME }}
+            SUPERADMIN_NAME=${{ secrets.SUPERADMIN_NAME }}
+            SUPERADMIN_PASSWORD=${{ secrets.SUPERADMIN_PASSWORD }}
+
             DB_CONNECTION=mysql
             DB_HOST=${{ secrets.DB_HOST }}
             DB_PORT=${{ secrets.DB_PORT }}
