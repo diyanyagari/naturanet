@@ -21,8 +21,10 @@ COPY . .
 RUN chown -R www-data:www-data /app \
  && chmod -R 775 storage bootstrap/cache
 
-# Install composer dependencies
-RUN COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
+# Validate and Install composer dependencies
+RUN composer validate --no-check-publish && \
+    composer diagnose --no-interaction && \
+    COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
 
 # Run Octane with FrankenPHP
 ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=80"]
