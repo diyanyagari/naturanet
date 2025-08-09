@@ -14,23 +14,20 @@ COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy the entire Laravel project
-COPY . .
+# Copy composer files first (for caching)
+COPY composer.json composer.lock ./
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Make sure Laravel cache & storage directories exist (during build)
+# Prepare cache & storage before composer install
 RUN mkdir -p bootstrap/cache storage \
-    && chmod -R 775 bootstrap/cache storage \
-    && cp .env.example .env || true
+    && chown -R www-data:www-data bootstrap/cache storage \
+    && chmod -R 775 bootstrap/cache storage
 
-# Validate and Install composer dependencies
+# Install dependencies
 RUN composer validate --no-check-publish && \
     COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
 
-# Use entrypoint script first
-ENTRYPOINT ["/entrypoint.sh"]
+# Copy the rest of the Laravel project
+COPY . .
 
 # Run Octane with FrankenPHP
 ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=80"]
