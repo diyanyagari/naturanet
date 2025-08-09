@@ -33,7 +33,8 @@ services:
     restart: always
     working_dir: /app
     volumes:
-      - .:/app
+      - .:/app:cached
+      - /app/vendor
     ports:
       - "8080:80"
     env_file:
