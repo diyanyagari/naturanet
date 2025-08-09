@@ -23,7 +23,6 @@ RUN chown -R www-data:www-data /app \
 
 # Validate and Install composer dependencies
 RUN composer validate --no-check-publish && \
-    composer diagnose --no-interaction && \
     COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
 
 # Run Octane with FrankenPHP
