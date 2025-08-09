@@ -17,9 +17,10 @@ WORKDIR /app
 # Copy the entire Laravel project
 COPY . .
 
-# Set correct permissions
-# RUN chown -R www-data:www-data /app \
-#  && chmod -R 775 storage bootstrap/cache
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Make sure Laravel cache & storage directories exist (during build)
 RUN mkdir -p bootstrap/cache storage \
     && chmod -R 775 bootstrap/cache storage \
     && cp .env.example .env || true
@@ -27,6 +28,9 @@ RUN mkdir -p bootstrap/cache storage \
 # Validate and Install composer dependencies
 RUN composer validate --no-check-publish && \
     COMPOSER_CACHE_DIR=/tmp/composer-cache composer install --no-dev --optimize-autoloader
+
+# Use entrypoint script first
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Run Octane with FrankenPHP
 ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=80"]
