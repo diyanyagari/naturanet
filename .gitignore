@@ -43,7 +43,6 @@ Thumbs.db
 /.phpunit.cache
 
 # Composer & NPM
-composer.lock
 npm-debug.log
 yarn-error.log
 
