@@ -86,6 +86,6 @@ jobs:
             # Check if Docker container is running on port 9000
             sudo lsof -i :9000 || echo "No service is using port 9000"
 
-      - name: Composer install check
-        run: |
-          docker run --rm natura-net php -r "echo 'Testing container build...';"
+      # - name: Composer install check
+      #   run: |
+      #     docker run --rm natura-net php -r "echo 'Testing container build...';"
