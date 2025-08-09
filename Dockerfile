@@ -18,8 +18,11 @@ WORKDIR /app
 COPY . .
 
 # Set correct permissions
-RUN chown -R www-data:www-data /app \
- && chmod -R 775 storage bootstrap/cache
+# RUN chown -R www-data:www-data /app \
+#  && chmod -R 775 storage bootstrap/cache
+RUN mkdir -p bootstrap/cache storage \
+    && chmod -R 775 bootstrap/cache storage \
+    && cp .env.example .env || true
 
 # Validate and Install composer dependencies
 RUN composer validate --no-check-publish && \
