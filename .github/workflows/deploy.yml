@@ -80,8 +80,8 @@ jobs:
             EOF
 
             # Set permission untuk Laravel
-            sudo chown -R www-data:www-data /var/www/naturanet
-            sudo chmod -R 775 storage bootstrap/cache
+            # sudo chown -R www-data:www-data /var/www/naturanet
+            # sudo chmod -R 775 storage bootstrap/cache
 
             # Install dependencies
             composer install --no-dev --optimize-autoloader
