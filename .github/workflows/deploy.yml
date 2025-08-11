@@ -14,25 +14,27 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy to VPS via SSH
-        if: ${{ github.ref_name == 'main' }}
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/project/naturanet
-            git pull origin main
+            echo "🚀 Deploying Laravel to VPS..."
 
-            cp .env.example .env
+            # Pastikan folder ada
+            sudo mkdir -p /var/www/naturanet
+            cd /var/www/naturanet
 
-            # echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
-            # echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-            # echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-            # echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-            # echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-            # echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            # Pull latest changes
+            if [ ! -d .git ]; then
+              git clone git@github.com:username/naturanet.git .
+            else
+              git reset --hard
+              git pull origin main
+            fi
 
+            # Set environment file
             cat <<EOF > .env
             APP_NAME=Laravel
             APP_ENV=production
@@ -54,38 +56,30 @@ jobs:
             DB_USERNAME=${{ secrets.DB_USERNAME }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 
-            BROADCAST_DRIVER=log
             CACHE_DRIVER=file
             QUEUE_CONNECTION=sync
             SESSION_DRIVER=file
             SESSION_LIFETIME=120
-
-            MEMCACHED_HOST=127.0.0.1
-
-            REDIS_HOST=127.0.0.1
-            REDIS_PASSWORD=null
-            REDIS_PORT=6379
-
-            MAIL_MAILER=smtp
-            MAIL_HOST=mailpit
-            MAIL_PORT=1025
-            MAIL_USERNAME=null
-            MAIL_PASSWORD=null
-            MAIL_ENCRYPTION=null
-            MAIL_FROM_ADDRESS="hello@example.com"
-            MAIL_FROM_NAME="\${APP_NAME}"
-
             EOF
 
-            echo ".env created with DB & APP_KEY from secrets..."
+            # Set permission untuk Laravel
+            sudo chown -R www-data:www-data /var/www/naturanet
+            sudo chmod -R 775 storage bootstrap/cache
 
-            docker-compose down --remove-orphans
-            docker-compose build --build-arg ENV_FILE=.env --no-cache
-            docker-compose up -d
+            # Install dependencies
+            composer install --no-dev --optimize-autoloader
 
-            # Check if Docker container is running on port 9000
-            sudo lsof -i :9000 || echo "No service is using port 9000"
+            # Migrate database
+            php artisan migrate --force
 
-      # - name: Composer install check
-      #   run: |
-      #     docker run --rm natura-net php -r "echo 'Testing container build...';"
+            # Clear & cache configs
+            php artisan config:clear
+            php artisan route:clear
+            php artisan cache:clear
+            php artisan config:cache
+            php artisan route:cache
+
+            # Reload PHP-FPM
+            sudo systemctl reload php8.2-fpm
+
+            echo "✅ Deployment selesai!"
